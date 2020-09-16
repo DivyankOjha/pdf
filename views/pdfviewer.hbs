@@ -1,0 +1,334 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <script src="https://unpkg.com/pdf-lib@1.4.0"></script>
+    <script src="https://unpkg.com/downloadjs@1.4.7"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.11.0/pdf-lib.min.js"></script>
+    <link src="../public/stylesheets/style.css">
+    <title>PDF Express</title>
+    <script>
+        async function getlocal() {
+            console.log("Hello");
+            const { degrees, PDFDocument, rgb, StandardFonts } = PDFLib
+            const url = './abc.pdf'
+            const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer())
+            console.log(url)
+
+            // Load a PDFDocument from the existing PDF bytes
+            const pdfDoc = await PDFDocument.load(existingPdfBytes);
+            // Embed the Helvetica font
+            //     const helveticaFont = pdfDoc.embedFont(StandardFonts.Helvetica)
+
+
+            const svgPath =
+                'M 0,20 L 100,160 Q 130,200 150,120 C 190,-40 200,200 300,150 L 400,90'
+
+            // Create a new PDFDocument
+
+            const pages = pdfDoc.getPages();
+            const firstPage = pages[0];
+            // Add a blank page to the document
+            const page = pdfDoc.addPage();
+            firstPage.moveTo(100, page.getHeight() - 5)
+
+            // Draw the SVG path as a black line
+            firstPage.moveDown(25);
+            firstPage.drawSvgPath(svgPath);
+
+
+
+            // Get the first page of the document
+
+
+            // Get the width and height of the first page
+
+
+
+
+            // Serialize the PDFDocument to bytes (a Uint8Array)
+            //const pdfBytes = await pdfDoc.save()
+            //  download(pdfBytes, "pdf-lib_creation_example.pdf", "application/pdf");
+
+            //    let isDrawing = true;
+            //      let x = localStorage.getItem("arrayX")
+            //      let y = localStorage.getItem("arrayY")
+            //   if (isDrawing === true) {
+            //      for (i = 0; i < x.length; i++) {
+            //       drawLine(context, x[i], y[i], x[i + 1], y[i + 1]);
+            //    x = x[i + 1];
+            // y = y[i + 1];
+            // console.log(x, y)
+            //   }
+
+            // draw()
+            // console.log(x, y)
+            // console.log("mousemove" + x, y)
+        }
+
+
+    </script>
+</head>
+
+<body onload="getlocal()">
+
+
+
+    <section>{{#each files}}
+            <embed id="overlay" src={{url}} width="1000" height="900">
+            <div id="canvas-wrap">
+                <canvas id="myPics" width="1000" height="900"> </canvas>
+            </div>
+        {{/each}}
+    </section>
+
+
+    {{!-- <section>
+        <canvas id="X" width="790" height="590"></canvas>
+        <ul>
+            {{#each files}}
+                <embed src="https://www.photopea.com#%7B%22{{files}}%22:%5B%22{{url}}%22%5D,%22environment%22:%7B%7D%7D"
+                    width="800" height="600" id="myPics">
+            {{/each}}
+        </ul>
+    </section> --}}
+
+    {{!-- <h1>
+        {{#each files}}
+            <tr>
+                <h3></h3>
+                <h3><a href="{{url}}">{{name}}</h3>
+            </tr>
+        {{/each}}
+    </h1>
+--}}
+    {{!-- <section onmousemove="coordinate(event)">
+        <div id="X" "Y">
+            <div>
+                {{!-- {{#each files}}
+                    <embed src="{{url}}" width="800" height="600">
+                {{/each}} --}}
+    {{!-- </div>
+        </div>
+    </section>
+
+    <div>
+        <input type="text" id="X">
+        <input type="text" id="Y">
+    </div> --}}
+    <footer>
+        <p>Click the button to modify an existing PDF document with <code>pdf-lib</code></p>
+        <button onclick="drawSvgPaths()">draw svg PDF</button>
+        <p class="small">(Your browser will download the resulting file)</p>
+    </footer>
+    <footer>
+        <p>Click the button to modify an existing PDF document with <code>pdf-lib</code></p>
+        <button onclick="modifyPdf()">Modify PDF</button>
+        <p class="small">(Your browser will download the resulting file)</p>
+    </footer>
+</body>
+
+<script>
+    // When true, moving the mouse draws on the canvas
+    let isDrawing = false;
+    let x = 0;
+    let y = 0;
+    let arrayX = []
+    let arrayY = []
+
+    const myPics = document.getElementById('myPics');
+    const context = myPics.getContext('2d');
+
+    // event.offsetX, event.offsetY gives the (x,y) offset from the edge of the canvas.
+
+    // Add the event listeners for mousedown, mousemove, and mouseup
+    myPics.addEventListener('mousedown', e => {
+        x = e.offsetX;
+        y = e.offsetY;
+        isDrawing = true;
+        console.log("mousedown" + x, y)
+        localStorage.setItem("x1", x)
+        localStorage.setItem("y1", y)
+    });
+
+    myPics.addEventListener('mousemove', e => {
+        // let localArray = []
+        if (isDrawing === true) {
+            drawLine(context, x, y, e.offsetX, e.offsetY);
+            x = e.offsetX;
+            y = e.offsetY;
+            arrayX.push(x)
+            arrayY.push(y)
+
+            // draw()
+            // console.log(x, y)
+            console.log("mousemove" + x, y)
+
+
+        }
+    });
+
+    window.addEventListener('mouseup', e => {
+        localStorage.setItem("arrayX", arrayX)
+        localStorage.setItem("arrayY", arrayY)
+
+        if (isDrawing === true) {
+            //console.log(x, y)
+            drawLine(context, x, y, e.offsetX, e.offsetY);
+            console.log("mouseup" + x, y)
+            localStorage.setItem("x2", x)
+            localStorage.setItem("y2", y)
+            x = 0;
+            y = 0;
+            isDrawing = false;
+
+        }
+    });
+
+    function drawLine(context, x1, y1, x2, y2) {
+        context.beginPath();
+        context.strokeStyle = 'red';
+        context.lineWidth = 10;
+        context.moveTo(x1, y1);
+        //let x11 = context.moveTo(x1, y1);
+
+        //  console.log("x1:" + x1, "y1 :" + y1)
+        context.lineTo(x2, y2);
+        // console.log("x2 : " + x2, "y2 :" + y2)
+        context.stroke();
+        context.closePath();
+
+        function draw() {
+            var canvas = document.getElementById('myPicss');
+            if (canvas.getContext) {
+                var ctx = canvas.getContext('2d');
+                ctx.fillRect(25, 25, 100, 100);
+                ctx.clearRect(45, 45, 60, 60);
+                ctx.strokeRect(50, 50, 50, 50);
+            }
+        }
+        //  drawSvgPaths(x1, y1, x2, y2)
+    }
+</script>
+{{!-- <script>
+
+    // function getfirst(x, y) {
+    // console.log(x, y)
+    // }
+    const { degrees, PDFDocument, rgb, StandardFonts } = PDFLib;
+    // import { degrees, PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+
+    async function drawSvgPaths(x1, y1, x2, y2) {
+        console.log(x1, y1, x2, y2)
+        // SVG path for a wavy line
+        let svgPath =
+            `M 50,100 L 100,160 Q 130,200 150,120 C 190,-40 200,200 300,150 L 400,90`
+        console.log(svgPath)
+        //'M 0,20 L 100,160 Q 130,200 150,120 C 190,-40 200,200 300,150 L 400,90'
+
+        // Create a new PDFDocument
+        //  const pdfDoc = await PDFDocument.create()
+        let url = "https://file-examples-com.github.io/uploads/2017/10/file-sample_150kB.pdf"
+        console.log(url)
+        let existingPdfBytes = await fetch(url).then(res => res.arrayBuffer())
+
+        let pdfDoc = await PDFDocument.load(existingPdfBytes)
+        let helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
+
+        let pages = pdfDoc.getPages()
+        let firstPage = pages[0]
+
+
+
+
+
+        // Add a blank page to the document
+        //  firstPage = pdfDoc.addPage()
+        // firstPage.moveTo(100, firstPage.getHeight() - 5)
+
+        // Draw the SVG path as a black line
+        firstPage.moveDown(25)
+        firstPage.drawSvgPath(svgPath)
+
+        // Draw the SVG path as a thick green line
+        firstPage.moveDown(200)
+        firstPage.drawSvgPath(svgPath, { borderColor: rgb(0, 1, 0), borderWidth: 5 })
+
+        // Draw the SVG path and fill it with red
+
+
+        // Serialize the PDFDocument to bytes (a Uint8Array)
+
+        let pdfBytes = await pdfDoc.save();
+        //modifyPdf(pdfBytes);
+
+        // Trigger the browser to download the PDF document
+        download(pdfBytes, "pdf-lib_creation_example.pdf", "application/pdf");
+    }
+
+</script> --}}
+<script>
+    const { degrees, PDFDocument, rgb, StandardFonts } = PDFLib
+
+    //{{!-- var c = document.getElementById("myPics");
+    //  var ctx = c.getContext("2d");
+    //  ctx.beginPath();
+    //  ctx.rect(330, 350, 200, 200); //(letf margin, top margin, length, breadth)
+    // ctx.stroke(); --}}
+
+
+
+    async function modifyPdf() {
+        // Fetch an existing PDF document
+        //  const url = 'https://file-examples-com.github.io/uploads/2017/10/file-sample_150kB.pdf'
+        const url = './abc.pdf'
+        const existingPdfBytes = await fetch(url).then(res => res.arrayBuffer())
+
+        // Load a PDFDocument from the existing PDF bytes
+        const pdfDoc = await PDFDocument.load(existingPdfBytes)
+        // Embed the Helvetica font
+        const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
+
+
+        const svgPath =
+            'M 0,20 L 100,160 Q 130,200 150,120 C 190,-40 200,200 300,150 L 400,90'
+
+        // Create a new PDFDocument
+
+        const pages = pdfDoc.getPages()
+        const firstPage = pages[0]
+        // Add a blank page to the document
+        const page = pdfDoc.addPage()
+        firstPage.moveTo(100, page.getHeight() - 5)
+
+        // Draw the SVG path as a black line
+        firstPage.moveDown(25)
+        firstPage.drawSvgPath(svgPath)
+
+
+
+        // Get the first page of the document
+
+
+        // Get the width and height of the first page
+        const { width, height } = firstPage.getSize()
+
+        // Draw a string of text diagonally across the first page
+        firstPage.drawText('This text was added with JavaScript!', {
+            x: 5,
+            y: height / 2 + 300,
+            size: 50,
+            font: helveticaFont,
+            color: rgb(0.95, 0.1, 0.1),
+            rotate: degrees(-45),
+        })
+
+        // Serialize the PDFDocument to bytes (a Uint8Array)
+        const pdfBytes = await pdfDoc.save()
+
+        // Trigger the browser to download the PDF document
+        download(pdfBytes, "pdf-lib_modification_example.pdf", "application/pdf");
+    }
+</script>
+
+</html>

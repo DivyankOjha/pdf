@@ -1,0 +1,16 @@
+https://github.com/Hopding/pdf-lib
+http://thecodebarbarian.com/working-with-pdfs-in-node-js.html
+https://github.com/Hopding/pdf-lib#complete-examples
+https://github.com/Hopding/pdf-lib/blob/master/apps/web/test1.html
+https://pdfclown.org/resources/
+https://pdfclown.org/resources/code-samples/text-highlighting/
+http://clown.sourceforge.net/docs/api/
+https://pdfbox.apache.org/#:~:text=The%20Apache%20PDFBox%C2%AE%20library,includes%20several%20command%2Dline%20utilities.
+https://inkscape.org/about/features/
+https://i.reddit.com/r/IAmA/comments/c8ru2y/i_made_a_free_alternative_to_photoshop_that_is/?limit=500
+https://www.pdftron.com/company/startups/
+https://stackoverflow.com/questions/5763911/placing-a-div-within-a-canvas
+https://developer.mozilla.org/en-US/docs/Web/API/Element/mouseup_event#:~:text=The%20mouseup%20event%20is%20fired,the%20counterpoint%20to%20mousedown%20events
+https://github.com/efundi/PDF-Marker
+https://github.com/highkite/pdfAnnotate#TranslationCoordinates
+

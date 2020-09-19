@@ -3,17 +3,47 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-
+//const { PDFNet } = require("@pdftron/pdfnet-node");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
+//import PSPDFKit from "pspdfkit";
 
 var app = express();
+
+app.get("/", function (req, res) {
+  global.window = {
+    document: {
+      createElementNS: () => {
+        return {};
+      },
+    },
+  };
+  global.navigator = {};
+  global.btoa = () => {};
+
+  var fs = require("fs");
+  var PSPDFKit = require("pspdfkit");
+
+  PSPDFKit.load({});
+  fs.writeFileSync("./document.pdf", data);
+
+  delete global.window;
+  delete global.navigator;
+  delete global.btoa;
+});
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
 
 app.use(logger("dev"));
+// app.use(pdfMiddleware);
+// var pdfMiddleware = function (req, res, next) {
+//   console.log("LOGGED");
+//   next();// };
+
+//app.use(myLogger);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

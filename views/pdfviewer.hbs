@@ -72,7 +72,30 @@
 
 <body onload="getlocal()">
 
+    {{!-- <section> --}}
+    <canvas id="canvas" style="border:2px solid black;" width="800" height="800">
+    </canvas>
+    {{!-- </section>
+    <script>
+        var canvas = document.getElementById('canvas');
+        var ctx = canvas.getContext('2d');
 
+        var data = 'M 0, 20 L 100, 160 Q 130, 200 150, 120 C 190, -40 200, 200 300, 150 L 400, 90';
+
+        var DOMURL = window.URL || window.webkitURL || window;
+
+        var img = new Image();
+        var svg = new Blob([data], { type: 'image/svg;charset=utf-8' });
+        var url = DOMURL.createObjectURL(svg);
+
+        img.onload = function () {
+            ctx.drawImage(img, 0, 0);
+            DOMURL.revokeObjectURL(url);
+        }
+
+        img.src = url;
+        console.log(url)
+    </script> --}}
 
     <section>{{#each files}}
             <embed id="overlay" src={{url}} width="1000" height="900">
@@ -91,7 +114,7 @@
                     width="800" height="600" id="myPics">
             {{/each}}
         </ul>
-    </section> --}}
+    </section> 
 
     {{!-- <h1>
         {{#each files}}
@@ -169,6 +192,7 @@
     });
 
     window.addEventListener('mouseup', e => {
+        // modifyPdf();
         localStorage.setItem("arrayX", arrayX)
         localStorage.setItem("arrayY", arrayY)
 
@@ -178,11 +202,13 @@
             console.log("mouseup" + x, y)
             localStorage.setItem("x2", x)
             localStorage.setItem("y2", y)
+
             x = 0;
             y = 0;
             isDrawing = false;
 
         }
+
     });
 
     function drawLine(context, x1, y1, x2, y2) {
@@ -289,9 +315,14 @@
         // Embed the Helvetica font
         const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica)
 
+        for (var i in arrayX) {
+            let data += '' + i + ' ';
 
+        }
+        console.log("data" + data)
         const svgPath =
-            'M 0,20 L 100,160 Q 130,200 150,120 C 190,-40 200,200 300,150 L 400,90'
+            'M 0,20 L 100,160 L 400,90'
+        'M' + x1 + ',' + y1 + 'Q 130, 200 150, 120 C 190, -40 200, 200 300, 150 L 400, 90'
 
         // Create a new PDFDocument
 
